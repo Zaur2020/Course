@@ -123,7 +123,8 @@ public class Main {
 
                     break;
 
-                case 4:
+                case 2:
+                    System.out.println("teacher");
                     break;
 
                 default:
