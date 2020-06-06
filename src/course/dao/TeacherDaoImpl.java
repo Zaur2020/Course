@@ -1,24 +1,25 @@
+
 package course.dao;
 
-import course.model.Student;
+import course.model.Teacher;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StudentDaoImpl implements StudentDaoInter {
+public class TeacherDaoImpl implements TeacherDaoInter{
 
     @Override
-    public List<Student> getStudentList() throws Exception {
-
-        List<Student> studentlist = new ArrayList<Student>();
+    public List<Teacher> getTeacherList() throws Exception {
+        
+        List<Teacher> teacherlist = new ArrayList<Teacher>();
         Connection c = null;
         PreparedStatement ps = null;
         ResultSet r = null;
         
 
-        String sql = "select id, name, surname,address, email,contact from student where active =1;";
+        String sql = "select id,name,Surname,Address,Email from teacher where Active=1;";
 
         try {
             c = Db_Helper.getconnection();
@@ -26,15 +27,14 @@ public class StudentDaoImpl implements StudentDaoInter {
                 ps = c.prepareStatement(sql);
                 r = ps.executeQuery();
                 while (r.next()) {
-                    Student s = new Student();
-                    s.setId(r.getInt("id"));
-                    s.setName(r.getString("Name"));
-                    s.setSurname(r.getString("Surname"));
-                    s.setAddress(r.getString("Address"));
-                    s.setEmail(r.getString("Email"));
-                    s.setContact(r.getInt("Contact"));
+                    Teacher t = new Teacher();
+                    t.setId(r.getInt("id"));
+                    t.setName(r.getString("Name"));
+                    t.setSurname(r.getString("Surname"));
+                    t.setAddress(r.getString("Address"));
+                    t.setEmail(r.getString("Email"));
 
-                    studentlist.add(s);
+                    teacherlist.add(t);
                 }
             } else {
                 System.out.println("Connection is null");
@@ -57,27 +57,28 @@ public class StudentDaoImpl implements StudentDaoInter {
             }
 
         }
-        return studentlist;
-    }
-
+        return teacherlist;
+    }    
+    
+    
+    
     @Override
-    public boolean addStudent(Student s)throws Exception {
-
-        boolean result = false;
+    public boolean addTeacher(Teacher t) throws Exception {
+        
+        boolean result=false;
         Connection c = null;
         PreparedStatement ps = null;
-
-        String sql = "INSERT into student (Name,Surname,Address,Email,Contact)\r\n" + "values(?,?,?,?,?)";
-
-        try {
+        
+        String sql ="insert into teacher (`Name`,Surname,Address,Email)\n" +"VALUES(?,?,?,?);";
+        
+         try {
             c = Db_Helper.getconnection();
             if (c != null) {
                 ps = c.prepareStatement(sql);
-                ps.setString(1, s.getName());
-                ps.setString(2, s.getSurname());
-                ps.setString(3, s.getAddress());
-                ps.setString(4, s.getEmail());
-                ps.setInt(5, s.getContact());
+                ps.setString(1,t.getName());
+                ps.setString(2, t.getSurname());
+                ps.setString(3, t.getAddress());
+                ps.setString(4, t.getEmail());
                 ps.execute();
                 result = true;
             } else {
@@ -94,17 +95,20 @@ public class StudentDaoImpl implements StudentDaoInter {
             }
         }
         return result;
+
     }
-
+    
+    
+    
     @Override
-    public Student getStudentById(int id)throws Exception {
-
-        Student s = new Student();
+    public Teacher getTeacherById(int id) throws Exception {
+        
+        Teacher t = new Teacher();
         Connection c = null;
         PreparedStatement ps = null;
         ResultSet r = null;
 
-        String sql = "SELECT id,Name,Surname,Address,Email,Contact from student where active=1 and id=?;";
+        String sql = "SELECT id,Name,Surname,Address,Email from teacher where active=1 and id=?;";
 
         try {
             c = Db_Helper.getconnection();
@@ -113,12 +117,11 @@ public class StudentDaoImpl implements StudentDaoInter {
                 ps.setLong(1, id);
                 r = ps.executeQuery();
                 if (r.next()) {
-                    s.setId(r.getInt("id"));
-                    s.setName(r.getString("Name"));
-                    s.setSurname(r.getString("Surname"));
-                    s.setAddress(r.getString("Address"));
-                    s.setEmail(r.getString("Email"));
-                    s.setContact(r.getInt("Contact"));
+                    t.setId(r.getInt("id"));
+                    t.setName(r.getString("Name"));
+                    t.setSurname(r.getString("Surname"));
+                    t.setAddress(r.getString("Address"));
+                    t.setEmail(r.getString("Email"));
 
                 }
 
@@ -143,27 +146,29 @@ public class StudentDaoImpl implements StudentDaoInter {
             }
 
         }
-        return s;
+        return t;
     }
-
+    
+    
+    
+    
     @Override
-    public boolean getUpdateStudent(Student s, int id)throws Exception {
-        
+    public boolean getUpdateTeacher(Teacher t, int id) throws Exception {
+          
         Connection c = null;
         PreparedStatement ps = null;
         boolean result = false;
         
-        String sql = " UPDATE student set  Name=?,Surname=?,Address=?,Contact=?,Email=?" + "where id=?";
+        String sql = " UPDATE teacher set  Name=?,Surname=?,Address=?,Email=?" + "where id=?";
         try {
             c = Db_Helper.getconnection();
             if (c != null) {
                 ps = c.prepareStatement(sql);
-                ps.setString(1, s.getName());
-                ps.setString(2, s.getSurname());
-                ps.setString(3, s.getAddress());
-                ps.setInt(4, s.getContact());
-                ps.setString(5, s.getEmail());
-                ps.setLong(6, id);
+                ps.setString(1, t.getName());
+                ps.setString(2, t.getSurname());
+                ps.setString(3, t.getAddress());
+                ps.setString(4, t.getEmail());
+                ps.setLong(5, id);
 
                 ps.execute();
                 result = true;
@@ -188,21 +193,26 @@ public class StudentDaoImpl implements StudentDaoInter {
 
         return result;
     }
+    
+    
+    
+    
+    
 
     @Override
-    public boolean deleteStudent(int studentId) throws Exception {
-
+    public boolean deleteTeacher(int teacherId) throws Exception {
+        
         Connection c = null;
         PreparedStatement ps = null;
         boolean result = false;
         
-        String sql = " UPDATE student set active=0\r\n" + " where id=?\r\n";
+        String sql = " UPDATE teacher set active=0\r\n" + " where id=?\r\n";
 
         try {
             c = Db_Helper.getconnection();
             if (c != null) {
                 ps = c.prepareStatement(sql);
-                ps.setLong(1, studentId);
+                ps.setLong(1, teacherId);
 
                 ps.execute();
                 result = true;
@@ -227,6 +237,5 @@ public class StudentDaoImpl implements StudentDaoInter {
 
         return result;
     }
-
-
+    
 }

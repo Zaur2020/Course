@@ -1,24 +1,30 @@
+
 package course.dao;
 
-import course.model.Student;
+import course.model.Lesson;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StudentDaoImpl implements StudentDaoInter {
+/**
+ *
+ * @author zbnf8
+ */
+public class LessonDaoImpl implements LessonDaoInter{
+    private Object lessontlist;
 
     @Override
-    public List<Student> getStudentList() throws Exception {
-
-        List<Student> studentlist = new ArrayList<Student>();
+    public List<Lesson> getLessonList() throws Exception {
+        
+        List<Lesson> lessonlist = new ArrayList<Lesson>();
         Connection c = null;
         PreparedStatement ps = null;
         ResultSet r = null;
         
 
-        String sql = "select id, name, surname,address, email,contact from student where active =1;";
+        String sql = "select id, Lesson_name from lesson where active =1;";
 
         try {
             c = Db_Helper.getconnection();
@@ -26,15 +32,11 @@ public class StudentDaoImpl implements StudentDaoInter {
                 ps = c.prepareStatement(sql);
                 r = ps.executeQuery();
                 while (r.next()) {
-                    Student s = new Student();
-                    s.setId(r.getInt("id"));
-                    s.setName(r.getString("Name"));
-                    s.setSurname(r.getString("Surname"));
-                    s.setAddress(r.getString("Address"));
-                    s.setEmail(r.getString("Email"));
-                    s.setContact(r.getInt("Contact"));
+                    Lesson l = new Lesson();
+                    l.setId(r.getInt("id"));
+                    l.setLesson_name(r.getString("Lesson_name"));
 
-                    studentlist.add(s);
+                    lessonlist.add(l);
                 }
             } else {
                 System.out.println("Connection is null");
@@ -57,27 +59,24 @@ public class StudentDaoImpl implements StudentDaoInter {
             }
 
         }
-        return studentlist;
+        return lessonlist;
     }
-
+    
+    
     @Override
-    public boolean addStudent(Student s)throws Exception {
-
+    public boolean addLesson(Lesson l) throws Exception {
+        
         boolean result = false;
         Connection c = null;
         PreparedStatement ps = null;
 
-        String sql = "INSERT into student (Name,Surname,Address,Email,Contact)\r\n" + "values(?,?,?,?,?)";
+        String sql = "INSERT into lesson (Lesson_name)\r\n" + "values(?)";
 
         try {
             c = Db_Helper.getconnection();
             if (c != null) {
                 ps = c.prepareStatement(sql);
-                ps.setString(1, s.getName());
-                ps.setString(2, s.getSurname());
-                ps.setString(3, s.getAddress());
-                ps.setString(4, s.getEmail());
-                ps.setInt(5, s.getContact());
+                ps.setString(1, l.getLesson_name());
                 ps.execute();
                 result = true;
             } else {
@@ -96,15 +95,16 @@ public class StudentDaoImpl implements StudentDaoInter {
         return result;
     }
 
+    
     @Override
-    public Student getStudentById(int id)throws Exception {
-
-        Student s = new Student();
+    public Lesson getLessonById(int id) throws Exception {
+        
+        Lesson l = new Lesson();
         Connection c = null;
         PreparedStatement ps = null;
         ResultSet r = null;
 
-        String sql = "SELECT id,Name,Surname,Address,Email,Contact from student where active=1 and id=?;";
+        String sql = "SELECT id,Lesson_name from lesson where active=1 and id=?;";
 
         try {
             c = Db_Helper.getconnection();
@@ -113,12 +113,8 @@ public class StudentDaoImpl implements StudentDaoInter {
                 ps.setLong(1, id);
                 r = ps.executeQuery();
                 if (r.next()) {
-                    s.setId(r.getInt("id"));
-                    s.setName(r.getString("Name"));
-                    s.setSurname(r.getString("Surname"));
-                    s.setAddress(r.getString("Address"));
-                    s.setEmail(r.getString("Email"));
-                    s.setContact(r.getInt("Contact"));
+                    l.setId(r.getInt("id"));
+                    l.setLesson_name(r.getString("Lesson_name"));
 
                 }
 
@@ -143,26 +139,22 @@ public class StudentDaoImpl implements StudentDaoInter {
             }
 
         }
-        return s;
+        return l;
     }
 
     @Override
-    public boolean getUpdateStudent(Student s, int id)throws Exception {
+    public boolean getUpdateLesson(Lesson l, int id) throws Exception {
         
         Connection c = null;
         PreparedStatement ps = null;
         boolean result = false;
         
-        String sql = " UPDATE student set  Name=?,Surname=?,Address=?,Contact=?,Email=?" + "where id=?";
+        String sql = " UPDATE lesson set  Lesson_name=?" + "where id=?";
         try {
             c = Db_Helper.getconnection();
             if (c != null) {
                 ps = c.prepareStatement(sql);
-                ps.setString(1, s.getName());
-                ps.setString(2, s.getSurname());
-                ps.setString(3, s.getAddress());
-                ps.setInt(4, s.getContact());
-                ps.setString(5, s.getEmail());
+                ps.setString(1, l.getLesson_name());
                 ps.setLong(6, id);
 
                 ps.execute();
@@ -190,8 +182,8 @@ public class StudentDaoImpl implements StudentDaoInter {
     }
 
     @Override
-    public boolean deleteStudent(int studentId) throws Exception {
-
+    public boolean deleteLesson(int lessonId) throws Exception {
+        
         Connection c = null;
         PreparedStatement ps = null;
         boolean result = false;
@@ -202,7 +194,7 @@ public class StudentDaoImpl implements StudentDaoInter {
             c = Db_Helper.getconnection();
             if (c != null) {
                 ps = c.prepareStatement(sql);
-                ps.setLong(1, studentId);
+                ps.setLong(1, lessonId);
 
                 ps.execute();
                 result = true;
@@ -227,6 +219,5 @@ public class StudentDaoImpl implements StudentDaoInter {
 
         return result;
     }
-
-
+    
 }
